@@ -17,7 +17,7 @@
       <h3>Current Reservations and Waiting List</h3>
       <hr>
       <a href="/make"><button type="button" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-pencil"></span>Make Reservation</button></a>
-      <a href="/home"><button type="button" class="btn btn-lg"><span class="glyphicon glyphicon-home"></span></button></a>
+      <a href="/"><button type="button" class="btn btn-lg"><span class="glyphicon glyphicon-home"></span></button></a>
     </div>
     <div class="row">
 
@@ -27,7 +27,7 @@
           <div class="panel-heading">
             <h3 class="panel-title"><strong>Current Reservatons</strong></h3>
           </div>
-          <div class="panel-body" id="well-section">
+          <div class="panel-body" id="reservation-section">
 
           </div>
         </div>
@@ -38,30 +38,98 @@
           <div class="panel-heading">
             <h3 class="panel-title"><strong>Waiting List</strong></h3>
           </div>
-          <div class="panel-body" id="well-section">
+          <div class="panel-body" id="waitlist-section">
 
           </div>
         </div>
       </div>
     </div>
     </div>
+    <footer class="footer">
+      <div class="container">
+        <p>Control Panel</p>
+        <p><a href="#" id="clear">Clear table</a>
+           | 
+        <a href="/api/view">API table link</a>
+          | 
+        <a href="/api/waitlist">API wait list</a>
+        </p>
+      </div>
+    </footer>
   </div>
+
 
   <script type="text/javascript">
 
-    $.get("/api", function(data) {
-      for (var i = 0; i < data.length; i++) {
-        var wellSection = $("<div>");
-        wellSection.addClass("well");
-        wellSection.attr("id", "character-well-" + i);
-        $("#well-section").append(wellSection);
+    function runTableQuery(){
 
-        $("#character-well-" + i).append("<h2>" + data[i].name + "</h2>");
-        $("#character-well-" + i).append("<h3>Role: " + data[i].role + "</h4>");
-        $("#character-well-" + i).append("<h3>Age: " + data[i].age + "</h4>");
-        $("#character-well-" + i).append("<h3>Force Points: " + data[i].forcePoints + "</h4>");
+      var currentURL = window.location.origin;
+
+      $.ajax({url: currentURL + "/api/tables", method: "GET"})
+        .done(function(tableData){
+          console.log("-------------");
+          console.log("URL: " + currentURL + "/api/tables");
+          console.log(tableData);
+          console.log("-------------");
+
+      for (var i = 0; i < data.length; i++) {
+        var reservationSection = $("<div>");
+        reservationSection.addClass("well");
+        reservationSection.attr("id", "tableWell-" + i+1);
+        $("#reservation-section").append(reservationSection);
+
+        var tableNumber = i+1;
+
+        $("#tableWell-" + i +1).append('<h2><span class="label label-primary">' + tableNumber + "</span> | " + tableData[i].uniqueid + "</h2>");
+
+        }
+      });
+    }
+
+    function runWaitingListQuery(){
+
+      var currentURL = window.location.origin;
+
+    $.ajax({url: currentURL + "/api/waitlist", method: "GET"}
+      .done(function(waitlistData){
+          console.log("-------------");
+          console.log("URL: " + currentURL + "/api/waitlist");
+          console.log(waitlistData);
+          console.log("-------------");
+  for (var i = 0; i < waitlistData.length; i++) {
+        var waitlistSection = $("<div>");
+        waitlistSection.addClass("well");
+        waitlistSection.attr("id", "waitlistWell-" + i+1);
+        $("#waitlist-section").append(waitlistSection);
+
+        var tableNumber = i+1;
+
+        $("#waitlistWell-" + i +1).append('<h2><span class="label label-primary">' + tableNumber + "</span> | " + waitlistData[i].uniqueid + "</h2>");
+
+        }
+      });
       }
-    });
+
+      function clearTable(){
+
+      var currentURL = window.location.origin;
+      $.ajax({url: currentURL + "/api/clear", method: "GET"}
+
+      }
+
+
+      $("#clear").on('click', function(){
+        alert("ckearing...");
+        clearTable();
+        location.reload();
+      })
+      
+
+      runTableQuery();
+      runWaitingListQuery();
+
+
+      
   </script>
   
 </body>
