@@ -25,6 +25,7 @@ var reservations = [];
 // Basic routes that send the user to the various HTML pages based on URL
 app.get("/", function(req, res) {
     res.sendFile(path.join(__dirname, "home.html"));
+
   });
   
   app.get("/reservation", function(req, res) {
